@@ -39,7 +39,7 @@ local logFile: filestream
 local function concatenateVarargs(...: varargs): string
     local varargs: string
     ##  for i = 1 , select("#", ...) do
-            varargs = varargs .. " " .. #[select(i, ...)]#
+            varargs = varargs .. #[select(i, ...)]#
     ##  end
     return varargs
 end
@@ -61,7 +61,7 @@ end
 ##  if not DISABLE_LOG_ERROR then
     function log.error(...: varargs): void <alwayspoly>
         local time: string = os.date("%H:%M:%S ")
-        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ":"]#)
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
         local error: string = concatenateVarargs(...)
 
         ##  if not DISABLE_LOG_FILE then
@@ -81,7 +81,7 @@ end
 ##  if not DISABLE_LOG_WARN then
     function log.warn(...: varargs): void <alwayspoly>
         local time: string = os.date("%H:%M:%S ")
-        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ":"]#)
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
         local warn: string = concatenateVarargs(...)
 
         ##  if not DISABLE_LOG_FILE then
@@ -100,7 +100,7 @@ end
 ##  if not DISABLE_LOG_INFO then
     function log.info(...: varargs): void <alwayspoly>
         local time: string = os.date("%H:%M:%S ")
-        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ":"]#)
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
         local info: string = concatenateVarargs(...)
 
         ##  if not DISABLE_LOG_FILE then
@@ -119,7 +119,7 @@ end
 ##  if not DISABLE_LOG_DEBUG then
     function log.debug(...: varargs): void <alwayspoly>
         local time: string = os.date("%H:%M:%S ")
-        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ":"]#)
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
         local debug: string = concatenateVarargs(...)
 
         ##  if not DISABLE_LOG_FILE then
