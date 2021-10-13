@@ -1,0 +1,136 @@
+--[[--------------------------------------------------------------------------------
+-   MIT License                                                                    -
+-                                                                                  -
+-   Copyright (c) 2021 AKDev                                                       -
+-                                                                                  -
+-   Permission is hereby granted, free of charge, to any person obtaining a copy   -
+-   of this software and associated documentation files (the "Software"), to deal  -
+-   in the Software without restriction, including without limitation the rights   -
+-   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell      -
+-   copies of the Software, and to permit persons to whom the Software is          -
+-   furnished to do so, subject to the following conditions:                       -
+-                                                                                  -
+-   The above copyright notice and this permission notice shall be included in all -
+-   copies or substantial portions of the Software.                                -
+-                                                                                  -
+-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR     -
+-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,       -
+-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE    -
+-   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER         -
+-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  -
+-   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  -
+-   SOFTWARE.                                                                      -
+----------------------------------------------------------------------------------]]
+
+require "os"
+require "io"
+
+global log = @record{}
+
+global log.COLORS = @record{}
+global log.COLORS.RED: string = "\x1B[31m"
+global log.COLORS.YELLOW: string = "\x1b[33m"
+global log.COLORS.GREEN: string = "\x1B[32m"
+global log.COLORS.BLUE: string = "\x1b[36m"
+global log.COLORS.GRAY: string = "\x1b[90m"
+global log.COLORS.RESET: string = "\x1B[0m"
+local logFile: filestream
+
+local function concatenateVarargs(...: varargs): string
+    local varargs: string
+    ##  for i = 1 , select("#", ...) do
+            varargs = varargs .. " " .. #[select(i, ...)]#
+    ##  end
+    return varargs
+end
+
+local function writeToFile(...: varargs): void
+    logFile:write(...)
+    logFile:flush()
+end
+
+local function writeToConsole(...: varargs): void
+    io.write(...)
+    io.flush()
+end
+
+##  if not DISABLE_LOG_FILE then
+        logFile = io.open("log.txt", "w+")
+##  end
+
+##  if not DISABLE_LOG_ERROR then
+    function log.error(...: varargs): void <alwayspoly>
+        local time: string = os.date("%H:%M:%S ")
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ":"]#)
+        local error: string = concatenateVarargs(...)
+
+        ##  if not DISABLE_LOG_FILE then
+                writeToFile(time, "ERROR ", sourceLocation, error, "\n")
+        ##  end
+
+        ##  if not DISABLE_LOG_COLOR then
+                writeToConsole(time, log.COLORS.RED, "ERROR ", log.COLORS.GRAY, sourceLocation, log.COLORS.RESET, error, "\n")
+        ##  else
+                writeToConsole(time, "ERROR ", sourceLocation, error, "\n")
+        ##  end
+    end
+##  else
+    function log.error(...: varargs): void    end
+##  end
+
+##  if not DISABLE_LOG_WARN then
+    function log.warn(...: varargs): void <alwayspoly>
+        local time: string = os.date("%H:%M:%S ")
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ":"]#)
+        local warn: string = concatenateVarargs(...)
+
+        ##  if not DISABLE_LOG_FILE then
+                writeToFile(time, "WARN  ", sourceLocation, warn, "\n")
+        ##  end
+        ##  if not DISABLE_LOG_COLOR then
+                writeToConsole(time, log.COLORS.YELLOW, "WARN  ", log.COLORS.GRAY, sourceLocation, log.COLORS.RESET, warn, "\n")
+        ##  else
+                writeToConsole(time, "WARN  ", sourceLocation, warn, "\n")
+        ##  end
+    end
+##  else
+    function log.warn(...: varargs): void    end
+##  end
+
+##  if not DISABLE_LOG_INFO then
+    function log.info(...: varargs): void <alwayspoly>
+        local time: string = os.date("%H:%M:%S ")
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ":"]#)
+        local info: string = concatenateVarargs(...)
+
+        ##  if not DISABLE_LOG_FILE then
+                writeToFile(time, "INFO  ", sourceLocation, info, "\n")
+        ##  end
+        ##  if not DISABLE_LOG_COLOR then
+                writeToConsole(time, log.COLORS.GREEN, "INFO  ", log.COLORS.GRAY, sourceLocation, log.COLORS.RESET, info, "\n")
+        ##  else
+                writeToConsole(time, "INFO  ", sourceLocation, info, "\n")
+        ##  end
+    end
+##  else
+    function log.info(...: varargs): void    end
+##  end
+
+##  if not DISABLE_LOG_DEBUG then
+    function log.debug(...: varargs): void <alwayspoly>
+        local time: string = os.date("%H:%M:%S ")
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ":"]#)
+        local debug: string = concatenateVarargs(...)
+
+        ##  if not DISABLE_LOG_FILE then
+                writeToFile(time, "DEBUG ", sourceLocation, debug, "\n")
+        ##  end
+        ##  if not DISABLE_LOG_COLOR then
+                writeToConsole(time, log.COLORS.BLUE, "DEBUG ", log.COLORS.GRAY, sourceLocation, log.COLORS.RESET, debug, "\n")
+        ##  else
+                writeToConsole(time, "DEBUG ", sourceLocation, debug, "\n")
+        ##  end
+    end
+##  else
+    function log.debug(...: varargs): void    end
+##  end 
