@@ -27,13 +27,13 @@ require "io"
 
 global log = @record{}
 
-global log.COLORS = @record{}
-global log.COLORS.RED: string = "\x1B[31m"
-global log.COLORS.YELLOW: string = "\x1b[33m"
-global log.COLORS.GREEN: string = "\x1B[32m"
-global log.COLORS.BLUE: string = "\x1b[36m"
-global log.COLORS.GRAY: string = "\x1b[90m"
-global log.COLORS.RESET: string = "\x1B[0m"
+local COLORS = @record{}
+global COLORS.RED: string = "\x1B[31m"
+global COLORS.YELLOW: string = "\x1b[33m"
+global COLORS.GREEN: string = "\x1B[32m"
+global COLORS.BLUE: string = "\x1b[36m"
+global COLORS.GRAY: string = "\x1b[90m"
+global COLORS.RESET: string = "\x1B[0m"
 local logFile: filestream
 
 local function concatenateVarargs(...: varargs): string
@@ -65,13 +65,13 @@ end
         local error: string = concatenateVarargs(...)
 
         ##  if not DISABLE_LOG_FILE then
-                writeToFile(time, "ERROR ", sourceLocation, error, "\n")
+                writeToFile(time, "[ERROR] ", sourceLocation, error, "\n")
         ##  end
 
         ##  if not DISABLE_LOG_COLOR then
-                writeToConsole(time, log.COLORS.RED, "ERROR ", log.COLORS.GRAY, sourceLocation, log.COLORS.RESET, error, "\n")
+                writeToConsole(time, COLORS.RED, "[ERROR] ", COLORS.GRAY, sourceLocation, COLORS.RESET, error, "\n")
         ##  else
-                writeToConsole(time, "ERROR ", sourceLocation, error, "\n")
+                writeToConsole(time, "[ERROR] ", sourceLocation, error, "\n")
         ##  end
     end
 ##  else
@@ -85,12 +85,12 @@ end
         local warn: string = concatenateVarargs(...)
 
         ##  if not DISABLE_LOG_FILE then
-                writeToFile(time, "WARN  ", sourceLocation, warn, "\n")
+                writeToFile(time, "[WARN]  ", sourceLocation, warn, "\n")
         ##  end
         ##  if not DISABLE_LOG_COLOR then
-                writeToConsole(time, log.COLORS.YELLOW, "WARN  ", log.COLORS.GRAY, sourceLocation, log.COLORS.RESET, warn, "\n")
+                writeToConsole(time, COLORS.YELLOW, "[WARN]  ", COLORS.GRAY, sourceLocation, COLORS.RESET, warn, "\n")
         ##  else
-                writeToConsole(time, "WARN  ", sourceLocation, warn, "\n")
+                writeToConsole(time, "[WARN]  ", sourceLocation, warn, "\n")
         ##  end
     end
 ##  else
@@ -104,12 +104,12 @@ end
         local info: string = concatenateVarargs(...)
 
         ##  if not DISABLE_LOG_FILE then
-                writeToFile(time, "INFO  ", sourceLocation, info, "\n")
+                writeToFile(time, "[INFO]  ", sourceLocation, info, "\n")
         ##  end
         ##  if not DISABLE_LOG_COLOR then
-                writeToConsole(time, log.COLORS.GREEN, "INFO  ", log.COLORS.GRAY, sourceLocation, log.COLORS.RESET, info, "\n")
+                writeToConsole(time, COLORS.GREEN, "[INFO]  ", COLORS.GRAY, sourceLocation, COLORS.RESET, info, "\n")
         ##  else
-                writeToConsole(time, "INFO  ", sourceLocation, info, "\n")
+                writeToConsole(time, "[INFO]  ", sourceLocation, info, "\n")
         ##  end
     end
 ##  else
@@ -123,12 +123,12 @@ end
         local debug: string = concatenateVarargs(...)
 
         ##  if not DISABLE_LOG_FILE then
-                writeToFile(time, "DEBUG ", sourceLocation, debug, "\n")
+                writeToFile(time, "[DEBUG] ", sourceLocation, debug, "\n")
         ##  end
         ##  if not DISABLE_LOG_COLOR then
-                writeToConsole(time, log.COLORS.BLUE, "DEBUG ", log.COLORS.GRAY, sourceLocation, log.COLORS.RESET, debug, "\n")
+                writeToConsole(time, COLORS.BLUE, "[DEBUG] ", COLORS.GRAY, sourceLocation, COLORS.RESET, debug, "\n")
         ##  else
-                writeToConsole(time, "DEBUG ", sourceLocation, debug, "\n")
+                writeToConsole(time, "[DEBUG] ", sourceLocation, debug, "\n")
         ##  end
     end
 ##  else
