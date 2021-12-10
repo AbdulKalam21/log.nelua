@@ -28,17 +28,18 @@ require "io"    -- required for printing to the console and writing to a text fi
 global log = @record{}        -- global namespace for the the logger
 
 local COLORS = @record{}      -- local namespace for the colors
-global COLORS.RED: string = "\x1B[31m"       -- ASCII RED color
-global COLORS.YELLOW: string = "\x1b[33m"    -- ASCII YELLOW color
-global COLORS.GREEN: string = "\x1B[32m"     -- ASCII GREEN color
-global COLORS.BLUE: string = "\x1b[36m"      -- ASCII BLUE color
-global COLORS.GRAY: string = "\x1b[90m"      -- ASCII GRAY color
-global COLORS.RESET: string = "\x1B[0m"      -- ASCII Terminal color
-local logFile: filestream     -- a file for logging
+global COLORS.RED: string = "\x1B[31m"
+global COLORS.YELLOW: string = "\x1b[33m"
+global COLORS.GREEN: string = "\x1B[32m"
+global COLORS.BLUE: string = "\x1b[36m"
+global COLORS.GRAY: string = "\x1b[90m"
+global COLORS.RESET: string = "\x1B[0m"
+
+local logFile: filestream     -- file for logging
 
 -- A function for concenating varargs
 local function concatenateVarargs(...: varargs): string
-    local varargs: string     -- we will concenate vargas to this string
+    local varargs: string
     ##for i = 1 , select("#", ...) do
             varargs = varargs .. #[select(i, ...)]#
     ##end
@@ -47,69 +48,59 @@ end
 
 -- A function which takes varags as argument, writes to the console
 local function writeToFile(...: varargs): void
-    logFile:write(...)        -- write to the file
-    logFile:flush()           -- flush
+    logFile:write(...)
+    logFile:flush()
 end
 
 -- A function which takes varargs as argument, writes to a file
 local function writeToConsole(...: varargs): void
-    io.write(...)            -- write to the console
-    io.flush()               -- flush
+    io.write(...)
+    io.flush()
 end
 
--- Check if DISABLE_LOG_FILE is true or defined
 ##if not DISABLE_LOG_FILE then
-    logFile = io.open("log.txt", "w+")    -- open the file in w+ mode, "w+": update mode, all previous data is erased
+    logFile = io.open("log.txt", "w+")
 ##end
 
--- Check if DISABLE_LOG_ERROR is true of defined
 ##if not DISABLE_LOG_ERROR then
     -- a functions which takes varargs as argument, prints/writes the varargs to the console/file with colors and source location
     function log.error(...: varargs): void <alwayspoly>
-        local time: string = os.date("%H:%M:%S ")                                                     -- a string containing the time in the hour, minute, second format
-        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)    -- a string containing the sourceLocation from where the function is called
-        local error: string = concatenateVarargs(...)                                                 -- concatenate the vargs using the concatenateVarargs functions, see above
+        local time: string = os.date("%H:%M:%S ")
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
+        local error: string = concatenateVarargs(...)
     
-        -- write to a text file if DISABLE_LOG_FILE is not true or not defined
         ##if not DISABLE_LOG_FILE then
             writeToFile(time, "[ERROR] ", sourceLocation, error, "\n")
         ##end
-    
-        -- write to the console without ascii colors if DISABLE_LOG_COLOR is not true or not defined
+
         ##if not DISABLE_LOG_COLOR then
             writeToConsole(time, COLORS.RED, "[ERROR] ", COLORS.GRAY, sourceLocation, COLORS.RESET, error, "\n")
-        -- write to the console with ascii colors otherwise
         ##else
             writeToConsole(time, "[ERROR] ", sourceLocation, error, "\n")
         ##end
     end
-    -- if DISABLE_LOG_ERROR is true or defined, use the follwoing defination of log.error
+
 ##else
     function log.error(...: varargs): void    end
 ##end
 
 ##if not DISABLE_LOG_WARN then
     -- a functions which takes varargs as argument, prints/writes the varargs to the console/file with colors and source location
-    function log.warn(...: varargs): void <alwayspoly>
+    function log.warn(...: varargs): void <alwayspoly>    
+        local time: string = os.date("%H:%M:%S ")
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
+        local warn: string = concatenateVarargs(...)
     
-        local time: string = os.date("%H:%M:%S ")                                                     -- a string containing the time in the hour, minute, second format
-        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)    -- a string containing the sourceLocation from where the function is called
-        local warn: string = concatenateVarargs(...)                                                  -- concatenate the vargs using the concatenateVarargs functions, see above
-    
-        -- write to a text file if DISABLE_LOG_FILE is not true or not defined
         ##if not DISABLE_LOG_FILE then
             writeToFile(time, "[WARN]  ", sourceLocation, warn, "\n")
         ##end
         
-        -- write to the console without ascii colors if DISABLE_LOG_COLOR is not true or not defined
         ##if not DISABLE_LOG_COLOR then
             writeToConsole(time, COLORS.YELLOW, "[WARN]  ", COLORS.GRAY, sourceLocation, COLORS.RESET, warn, "\n")
-        -- write to the console with ascii colors otherwise
         ##else
             writeToConsole(time, "[WARN]  ", sourceLocation, warn, "\n")
         ##end
     end
-    -- if DISABLE_LOG_WARN is true or defined, use the follwoing defination of log.warn
 ##else
     function log.warn(...: varargs): void    end
 ##end
@@ -118,24 +109,21 @@ end
     -- a functions which takes varargs as argument, prints/writes the varargs to the console/file with colors and source location
     function log.info(...: varargs): void <alwayspoly>
         
-        local time: string = os.date("%H:%M:%S ")                                                     -- a string containing the time in the hour, minute, second format
-        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)    -- a string containing the sourceLocation from where the function is called
-        local warn: string = concatenateVarargs(...)                                                  -- concatenate the vargs using the concatenateVarargs functions, see above
+        local time: string = os.date("%H:%M:%S ")
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
+        local warn: string = concatenateVarargs(...)
         
-        -- write to a text file if DISABLE_LOG_FILE is not true or not defined
         ##if not DISABLE_LOG_FILE then
             writeToFile(time, "[INFO]  ", sourceLocation, info, "\n")
         ##end
         
-        -- write to the console without ascii colors if DISABLE_LOG_COLOR is not true or not defined
         ##if not DISABLE_LOG_COLOR then
             writeToConsole(time, COLORS.GREEN, "[INFO]  ", COLORS.GRAY, sourceLocation, COLORS.RESET, info, "\n")
-        -- write to the console with ascii colors otherwise
         ##else
             writeToConsole(time, "[INFO]  ", sourceLocation, info, "\n")
         ##end
     end
-    -- if DISABLE_LOG_INFO is true or defined, use the follwoing defination of log.info
+
 ##else
     function log.info(...: varargs): void    end
 ##end
@@ -144,24 +132,21 @@ end
     -- a functions which takes varargs as argument, prints/writes the varargs to the console/file with colors and source location
     function log.debug(...: varargs): void <alwayspoly>
         
-        local time: string = os.date("%H:%M:%S ")                                                     -- a string containing the time in the hour, minute, second format
-        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)    -- a string containing the sourceLocation from where the function is called
-        local warn: string = concatenateVarargs(...)                                                  -- concatenate the vargs using the concatenateVarargs functions, see above
+        local time: string = os.date("%H:%M:%S ")
+        local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
+        local warn: string = concatenateVarargs(...)
         
-        -- write to a text file if DISABLE_LOG_FILE is not true or not defined
         ##if not DISABLE_LOG_FILE then
             writeToFile(time, "[DEBUG] ", sourceLocation, debug, "\n")
         ##end
         
-        -- write to the console without ascii colors if DISABLE_LOG_COLOR is not true or not defined
         ##if not DISABLE_LOG_COLOR then
             writeToConsole(time, COLORS.BLUE, "[DEBUG] ", COLORS.GRAY, sourceLocation, COLORS.RESET, debug, "\n")
         ##else
-        -- write to the console with ascii colors otherwise
             writeToConsole(time, "[DEBUG] ", sourceLocation, debug, "\n")
         ##end
     end
-    -- if DISABLE_LOG_DEBUG is ture or defined, use the follwoing defination of log.debug
+    
 ##else
     function log.debug(...: varargs): void    end
 ##end
