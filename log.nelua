@@ -111,7 +111,7 @@ end
         
         local time: string = os.date("%H:%M:%S ")
         local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
-        local warn: string = concatenateVarargs(...)
+        local info: string = concatenateVarargs(...)
         
         ##if not DISABLE_LOG_FILE then
             writeToFile(time, "[INFO]  ", sourceLocation, info, "\n")
@@ -134,7 +134,7 @@ end
         
         local time: string = os.date("%H:%M:%S ")
         local sourceLocation: string = (#[polysrcloc.srcname .. ":".. polysrcloc.lineno .. ": "]#)
-        local warn: string = concatenateVarargs(...)
+        local debug: string = concatenateVarargs(...)
         
         ##if not DISABLE_LOG_FILE then
             writeToFile(time, "[DEBUG] ", sourceLocation, debug, "\n")
